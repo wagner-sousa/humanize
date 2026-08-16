@@ -1,6 +1,6 @@
 ---
 name: humanize
-description: "Rewrites already-drafted text and code comments to remove the tell-tale signs of AI-generated writing — uniform rhythm, formulaic structure, over-corrected phrasing — while preserving every fact, example, and technical detail exactly. Runs a sequential six-pass editing pipeline (Pattern Breaker, Credibility Test, Voice Modeler, Imperfection Injector, Audio Test, Soul Detector), each pass building on the previous one's output. Two targets: prose (docs, PR descriptions, chat replies) and code comments (strip redundant WHAT comments, keep only non-obvious WHY). Triggers: humanize this, sound more human, less AI-generated, remove AI tics, sounds robotic, de-AI-ify, sounds like ChatGPT, clean up these comments."
+description: "Takes already-written text and strips the machine accent off it: uniform paragraph rhythm, hollow intensifiers, rule-of-three lists, throat-clearing openers, em-dash strings standing in for real punctuation — the patterns that mark AI-generated writing, without changing a single fact, example, or technical detail. Runs six sequential passes, each building on the last. Two targets: prose (docs, PR descriptions, commit bodies, chat replies) and code comments (delete comments that just restate the next line, keep only the ones explaining a non-obvious WHY). Use this skill whenever someone says the text sounds robotic, reads like ChatGPT, feels too uniform or over-corrected, wants it humanized or de-AI-ified, or asks to clean up comments that read like they were written by a machine."
 ---
 
 # Humanize — strip the AI accent from text and code
@@ -20,7 +20,7 @@ Ask which target if it not obvious from context — rewriting a paragraph and cl
 
 Before rewriting anything, identify what is load-bearing in the source and hold it fixed through all six passes:
 
-- **Facts, numbers, and code** — task details, before/after values, names cited, dates, commands, error strings, file paths — verbatim. Never invent or drop one to make a sentence flow better.
+- **Facts, numbers, and code** — task details, before/after values, names cited, dates, commands, error strings, file paths — verbatim. Never invent or drop one to make a sentence flow better. This extends to inferred cause, motive, or backstory: if the source says "enhances security," do not rewrite it as "closes the gaps we had" — the gaps are not in the source.
 - **Concrete examples** — every example stays, tied to the same claim it illustrates. Change how it is phrased, never remove it or make it vaguer.
 - **Mandatory structural blocks** — if the source has required sections, they must still exist and be identifiable after the rewrite. Soften the language inside a heading; do not delete the heading or merge two mandatory blocks into one.
 - **Domain constraints already in force** — if the source avoids certain jargon for its intended reader, that constraint survives the rewrite. Humanizing tone is not license to reintroduce jargon or change the intended reader.
@@ -39,7 +39,7 @@ Run these in order, on the full text each time — each pass builds on the outpu
 
 **3. Voice Modeler.** Check whether the text reads as a neutral, hedge-everything observer. If every sentence is equally cautious and equally weighted, the writer disappears. Where the source material supports it, let a clear point of view show — this was the right fix, this part was messy, this decision was a judgment call. Small, natural shifts in register between sentences are fine; total uniformity is the tell.
 
-**4. Imperfection Injector.** Perfect text has no story behind it. Where it fits naturally, add the kind of texture someone who actually lived the problem would include — an aside that shows judgment, a sentence that trails into the next thought instead of closing cleanly, an observation stated plainly instead of hedged. Do not force this into every paragraph, and do not "fix" it afterward — a slightly rough edge that came from a real observation is the point.
+**4. Imperfection Injector.** Perfect text has no story behind it. Where it fits naturally, add the kind of texture someone who actually lived the problem would include — an aside that shows judgment, a sentence that trails into the next thought instead of closing cleanly, an observation stated plainly instead of hedged. This is about *phrasing* texture, not new content: never invent a reason, a prior problem, or a piece of backstory the source did not state, even a plausible-sounding one — that is a fact violation, not a style choice. Do not force this into every paragraph, and do not "fix" it afterward — a slightly rough edge that came from a real observation is the point.
 
 **5. Audio Test.** Read the current draft as if speaking it aloud. Mark every sentence where you would stumble, pause oddly, or where the rhythm breaks from how a person actually talks. Watch specifically for em-dash strings doing the job of commas and periods. Rewrite those specific sentences so they flow as speech — this pass is surgical, only touching the sentences that failed the read-aloud check, not a rewrite of the whole thing again.
 
