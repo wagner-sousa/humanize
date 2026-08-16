@@ -49,7 +49,7 @@ Run these in order, on the full text each time — each pass builds on the outpu
 
 Run one extra step before the six passes, on comments only — never touches code logic:
 
-1. **Delete WHAT comments.** If the comment restates what the next line does and a reader with basic language knowledge does not need it, delete it.  above  is noise.
+1. **Delete WHAT comments.** If the comment restates what the next line does and a reader with basic language knowledge does not need it, delete it. `// increment counter` above `i++` is noise.
 2. **Keep WHY comments.** A comment explaining a non-obvious constraint, a workaround for a specific bug, or behavior that would surprise a reader stays — it then goes through the six passes above like any other prose.
 3. **No comment-per-line habit.** A block of code with a comment above every single line is itself an AI tell. If most lines need one, the code needs better names instead — say so rather than rewriting the comments.
 4. **Match the surrounding file's comment density and voice.** Do not introduce a heavily-commented style into a file that has almost none, or vice versa.
@@ -66,4 +66,4 @@ Fires on natural-language requests ("make this sound more human", "this reads li
 
 ## What this skill is not
 
-It does not add personality, jokes, or a different tone than what is already there — it removes machine tells from writing that is already correct, not perform a persona. It also is not a grammar or style checker: input that is already clean and human-sounding gets returned unchanged, not padded with unnecessary edits to justify the pass.
+It does not add personality, jokes, or a different tone than what is already there — it removes machine tells from writing that is already correct, it does not perform a persona. It also is not a grammar or style checker: input that is already clean and human-sounding gets returned unchanged, not padded with unnecessary edits to justify the pass.
