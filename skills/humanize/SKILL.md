@@ -1,72 +1,69 @@
 ---
 name: humanize
-description: "Rewrites text and code comments to read like a person wrote them instead of a model: kills AI tells (throat-clearing openers, rule-of-three lists, hollow adjectives, em-dash overuse, uniform sentence rhythm), while preserving every fact, code block, and technical detail exactly. Two targets — prose (docs, PR descriptions, chat replies) and code comments (strip redundant WHAT comments, keep only non-obvious WHY). Triggers: humanize this, sound more human, less AI-generated, remove AI tics, sounds robotic, de-AI-ify, sounds like ChatGPT, clean up these comments."
+description: "Rewrites already-drafted text and code comments to remove the tell-tale signs of AI-generated writing — uniform rhythm, formulaic structure, over-corrected phrasing — while preserving every fact, example, and technical detail exactly. Runs a sequential six-pass editing pipeline (Pattern Breaker, Credibility Test, Voice Modeler, Imperfection Injector, Audio Test, Soul Detector), each pass building on the previous one's output. Two targets: prose (docs, PR descriptions, chat replies) and code comments (strip redundant WHAT comments, keep only non-obvious WHY). Triggers: humanize this, sound more human, less AI-generated, remove AI tics, sounds robotic, de-AI-ify, sounds like ChatGPT, clean up these comments."
 ---
 
 # Humanize — strip the AI accent from text and code
 
 This skill rewrites already-correct content so it reads like a person wrote it. It never changes meaning, facts, code behavior, or technical accuracy — it only changes surface style: word choice, rhythm, structure, and what gets said out loud versus left implicit.
 
+This is a **rewrite pass on existing text**, not a content generator. Feed it a message, doc, or comment block that already exists.
+
 ## Two targets
 
-1. **Prose** — chat replies, docs, PR descriptions, commit bodies, comments in tickets. The full rewrite pass below applies.
-2. **Code comments** — same rewrite rules, plus one extra pass: delete comments that restate what the code already says, keep only comments that explain a non-obvious WHY (a constraint, a workaround, a trap). See [Code comments](#code-comments) below.
+1. **Prose** — chat replies, docs, PR descriptions, commit bodies, comments in tickets. The six passes below apply directly.
+2. **Code comments** — same six passes, plus one extra step before Pattern Breaker: see [Code comments](#code-comments).
 
-Ask which target if it isn't obvious from context — rewriting a paragraph and cleaning up comments in a diff are different jobs.
-
-## The AI-tell checklist
-
-Run every draft against this list before calling it done. Each one is a pattern that reads as machine-generated because a person under time pressure doesn't reach for it by default.
-
-| Tell | Example | Fix |
-|---|---|---|
-| Throat-clearing opener | "Great question! Let's dive into...", "Certainly, I'd be happy to help with that." | Start with the answer. |
-| Rule of three | "robust, scalable, and maintainable" | Say the one thing that's actually true, or list real distinct properties — not a rhythmic triad. |
-| Hollow intensifiers | "This is a crucial and powerful feature that seamlessly..." | Cut the adjective, or replace with the concrete fact it's standing in for. |
-| Uniform sentence rhythm | Every sentence 15-20 words, same subject-verb-object shape, back to back. | Vary length. Some sentences are five words. Some run on. |
-| Over-signposted structure | Headers/bullets for a three-sentence idea; "Firstly... Secondly... In conclusion..." | Let prose be prose when the content doesn't need a list. |
-| Redundant restatement | Answering a question by first repeating the question back. | Skip straight to the content. |
-| Hedge stacking | "It's worth noting that this could potentially, in some cases, possibly..." | Pick one hedge or none. State the actual confidence level. |
-| Closing summary nobody asked for | "In summary, we've covered X, Y, and Z today." | Just stop when the point is made. |
-| Em dash as default punctuation | Three or more em dashes in one paragraph doing the job of commas/periods. | Use periods, commas, or parentheses; keep em dash for the one place it earns its keep. |
-| Marketing verbs | "leverage," "utilize," "facilitate," "seamlessly integrate" | "use," "help," "connect." |
-
-None of these are wrong in isolation — a human writes "certainly" too. The tell is *density*: several of these stacked in one short passage.
+Ask which target if it not obvious from context — rewriting a paragraph and cleaning up comments in a diff are different jobs.
 
 ## What never changes
 
-- Facts, numbers, code, commands, error strings, file paths — verbatim.
-- Meaning and scope of claims (don't add confidence or hedges that weren't there).
-- Technical correctness of any code touched.
-- Security warnings, irreversible-action confirmations, and multi-step instructions stay in plain, unambiguous prose even if that means fewer stylistic changes — clarity wins over naturalness there.
+Before rewriting anything, identify what is load-bearing in the source and hold it fixed through all six passes:
 
-## Levels
+- **Facts, numbers, and code** — task details, before/after values, names cited, dates, commands, error strings, file paths — verbatim. Never invent or drop one to make a sentence flow better.
+- **Concrete examples** — every example stays, tied to the same claim it illustrates. Change how it is phrased, never remove it or make it vaguer.
+- **Mandatory structural blocks** — if the source has required sections, they must still exist and be identifiable after the rewrite. Soften the language inside a heading; do not delete the heading or merge two mandatory blocks into one.
+- **Domain constraints already in force** — if the source avoids certain jargon for its intended reader, that constraint survives the rewrite. Humanizing tone is not license to reintroduce jargon or change the intended reader.
+- **Technical correctness** of any code touched, and code behavior itself — this skill only ever rewrites comments, never logic.
+- **Security warnings, irreversible-action confirmations, and multi-step instructions** stay in plain, unambiguous prose even if that means fewer stylistic changes — clarity wins over naturalness there.
 
-| Level | Scope |
-|---|---|
-| `light` | Strip only the loudest tells: throat-clearing openers, closing summaries, obvious hedge-stacking. Leave structure and rhythm alone. |
-| `full` (default) | Everything in `light`, plus rule-of-three, hollow intensifiers, marketing verbs, over-signposting, and a rhythm pass (vary sentence length). |
-| `aggressive` | Everything in `full`, plus restructuring: convert list-heavy answers to prose where a list isn't earning its place, cut any sentence that doesn't add new information. |
+If a pass below would require breaking one of these to sound more natural, do not do it — find a different way to loosen the sentence instead.
+
+## The six passes
+
+Run these in order, on the full text each time — each pass builds on the output of the previous one, not on the original. Treat this as an editing pipeline, not a checklist to satisfy simultaneously.
+
+**1. Pattern Breaker.** Read the text looking specifically for the structural signature of AI writing: identical paragraph lengths, a bullet list where prose would read more naturally, a topic sentence that restates the heading, rule-of-three lists ("robust, scalable, and maintainable"), transitions like "Additionally" / "Furthermore" / "It is worth noting" doing no real work, throat-clearing openers ("Great question!", "Certainly, I would be happy to..."), unearned closing summaries. Break the symmetry — vary sentence length, cut a transition that is not earning its place, let one paragraph run longer than its neighbors if that is how the content actually breaks.
+
+**2. Credibility Test.** Go sentence by sentence. Anything that sounds over-corrected — grammatically perfect but oddly formal for the context, or so precise it reads like it was calibrated rather than said — gets rewritten plainer. Watch for hollow intensifiers ("crucial," "powerful," "seamlessly") and marketing verbs ("leverage," "utilize," "facilitate") — cut them or replace with the concrete fact they are standing in for. Ask: would a person actually say this out loud to a colleague, or does it read like it was drafted and then polished twice?
+
+**3. Voice Modeler.** Check whether the text reads as a neutral, hedge-everything observer. If every sentence is equally cautious and equally weighted, the writer disappears. Where the source material supports it, let a clear point of view show — this was the right fix, this part was messy, this decision was a judgment call. Small, natural shifts in register between sentences are fine; total uniformity is the tell.
+
+**4. Imperfection Injector.** Perfect text has no story behind it. Where it fits naturally, add the kind of texture someone who actually lived the problem would include — an aside that shows judgment, a sentence that trails into the next thought instead of closing cleanly, an observation stated plainly instead of hedged. Do not force this into every paragraph, and do not "fix" it afterward — a slightly rough edge that came from a real observation is the point.
+
+**5. Audio Test.** Read the current draft as if speaking it aloud. Mark every sentence where you would stumble, pause oddly, or where the rhythm breaks from how a person actually talks. Watch specifically for em-dash strings doing the job of commas and periods. Rewrite those specific sentences so they flow as speech — this pass is surgical, only touching the sentences that failed the read-aloud check, not a rewrite of the whole thing again.
+
+**6. Soul Detector.** Final scan, having now seen the text several times over: pick the 2-3 lines that still sound the most artificial — the ones that would make a skeptical reader think "that is a machine sentence." Rewrite each as if explaining it to a close colleague, not presenting it. This is the last pass; if the text already feels human going in, it is fine for this to be a light touch on one or two lines rather than a rewrite.
 
 ## Code comments
 
-Separate pass, run on comments only — never touches code logic:
+Run one extra step before the six passes, on comments only — never touches code logic:
 
-1. **Delete WHAT comments.** If the comment restates what the next line does and a reader with basic language knowledge doesn't need it, delete it. `// increment counter` above `i++` is noise.
-2. **Keep WHY comments.** A comment explaining a non-obvious constraint, a workaround for a specific bug, or behavior that would surprise a reader stays — and gets the same prose-tell pass as everything else (short, no hedging, no rule-of-three).
+1. **Delete WHAT comments.** If the comment restates what the next line does and a reader with basic language knowledge does not need it, delete it.  above  is noise.
+2. **Keep WHY comments.** A comment explaining a non-obvious constraint, a workaround for a specific bug, or behavior that would surprise a reader stays — it then goes through the six passes above like any other prose.
 3. **No comment-per-line habit.** A block of code with a comment above every single line is itself an AI tell. If most lines need one, the code needs better names instead — say so rather than rewriting the comments.
-4. **Match the surrounding file's comment density and voice.** Don't introduce a heavily-commented style into a file that has almost none, or vice versa.
+4. **Match the surrounding file's comment density and voice.** Do not introduce a heavily-commented style into a file that has almost none, or vice versa.
+
+## After the passes
+
+Do a final read against the "what never changes" list above — confirm every fact, example, and mandatory block from the source is still present and still accurate. Then present the rewritten text.
+
+If asked to explain what changed, describe it in terms of the passes above (e.g. "broke the symmetry of the three paragraphs and rewrote two sentences that read as over-formal"), not as a diff.
 
 ## How to invoke
 
-Fires on natural-language requests ("make this sound more human", "clean up these comments") without needing a slash command. When a Claude Code project has this skill installed, `/humanize [level] [target]` invokes it explicitly:
-
-```
-/humanize                  # full level, prose target, on the current draft
-/humanize light
-/humanize aggressive code  # aggressive level, code-comment target
-```
+Fires on natural-language requests ("make this sound more human", "this reads like AI wrote it", "clean up these comments") in any [agentskills.io](https://agentskills.io)-compatible agent — no command syntax required. Say which target (prose or code comments) if it is not obvious from what you are pointing at.
 
 ## What this skill is not
 
-It doesn't add personality, jokes, or a different tone than what's already there — it removes machine tells from writing that's already correct, not perform a persona. It also isn't a grammar or style checker: input that's already clean and human-sounding gets returned unchanged, not padded with unnecessary edits to justify the pass.
+It does not add personality, jokes, or a different tone than what is already there — it removes machine tells from writing that is already correct, not perform a persona. It also is not a grammar or style checker: input that is already clean and human-sounding gets returned unchanged, not padded with unnecessary edits to justify the pass.

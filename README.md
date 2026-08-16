@@ -12,23 +12,23 @@ humanize takes already-correct content and removes the surface patterns that rea
 Two targets:
 
 - **Prose** — chat replies, docs, PR descriptions, commit bodies, ticket comments.
-- **Code comments** — same prose pass, plus a second pass: delete comments that restate what the code already says, keep only non-obvious WHY comments.
+- **Code comments** — same six-pass pipeline, plus a step before it: delete comments that restate what the code already says, keep only non-obvious WHY comments.
 
-Three levels: `light` (strip the loudest tells only), `full` (default, full rewrite), `aggressive` (full + restructure over-listed answers back to prose).
+Runs a sequential six-pass editing pipeline — Pattern Breaker, Credibility Test, Voice Modeler, Imperfection Injector, Audio Test, Soul Detector — each pass building on the previous one's output, not the original text.
 
-Fires on natural-language requests in any [agentskills.io](https://agentskills.io)-compatible agent. Also ships a `/humanize` slash command for Claude Code.
+Fires on natural-language requests in any [agentskills.io](https://agentskills.io)-compatible agent — no command syntax required.
 
 ---
 
 ## Technologies
 
-- **[agentskills.io](https://agentskills.io) SKILL.md format** — agent-agnostic skill spec; works in Claude Code, OpenCode, or any agent that supports the format.
+- **[agentskills.io](https://agentskills.io) SKILL.md format** — agent-agnostic skill spec; works in Claude Code, O‍penCode, or any agent that supports the format.
 
 ---
 
 ## Prerequisites
 
-- Any [agentskills.io](https://agentskills.io)-compatible AI coding agent (Claude Code, OpenCode, or equivalent).
+- Any [agentskills.io](https://agentskills.io)-compatible AI coding agent (Claude Code, O‍penCode, or equivalent).
 - No other dependencies — the skill is pure SKILL.md instructions, no scripts.
 
 ---
@@ -50,23 +50,16 @@ Paths below use Claude Code's layout — swap `.claude/` for your agent's skills
 cp -r skills/humanize <your-project>/.claude/skills/
 ```
 
-To also get the `/humanize` slash command (Claude Code only):
-
-```bash
-cp commands/humanize.md <your-project>/.claude/commands/
-```
-
-No hooks needed — the skill is triggered by natural language or the slash command directly.
+No hooks or commands needed — the skill is triggered by natural language directly.
 
 ---
 
 ## Configuration
 
-The skill has no `config.json`. Behavior is driven by the level and target you pass at call time:
+The skill has no `config.json`. The only thing you pass at call time is the target:
 
 | Option | Values | Default |
 |---|---|---|
-| level | `light` / `full` / `aggressive` | `full` |
 | target | `prose` / `code` | `prose` |
 
 ---
@@ -77,9 +70,7 @@ The skill has no `config.json`. Behavior is driven by the level and target you p
 humanize/
 ├── skills/
 │   └── humanize/
-│       └── SKILL.md               # skill definition: rules, levels, code-comment pass
-├── commands/
-│   └── humanize.md                # /humanize slash command (Claude Code)
+│       └── SKILL.md               # skill definition: six-pass pipeline, code-comment pass
 ├── LICENSE
 └── README.md
 ```
@@ -88,19 +79,7 @@ humanize/
 
 ## Usage
 
-### Natural language (any agent)
-
-Ask in plain language: "make this sound more human", "clean up these comments", "remove the AI tics from my PR description". The skill fires on the description keywords.
-
-### Slash command (Claude Code)
-
-```bash
-/humanize                           # full level, prose target
-/humanize light
-/humanize aggressive
-/humanize code                      # code-comment target, full level
-/humanize aggressive code
-```
+Ask in plain language: "make this sound more human", "clean up these comments", "remove the AI tics from my PR description", "this reads like ChatGPT wrote it". The skill fires on the description keywords — no command syntax needed. Say which target (prose or code comments) if it isn't obvious from what you're pointing at.
 
 ---
 
@@ -108,12 +87,11 @@ Ask in plain language: "make this sound more human", "clean up these comments", 
 
 ```mermaid
 graph LR
-    Input[Text or code comments] --> Parse{Level + target?}
-    Parse -- prose --> TellCheck[AI-tell checklist pass]
-    Parse -- code --> TellCheck
-    TellCheck -- code target --> CommentPass[Code-comment pass: delete WHAT, keep WHY]
-    TellCheck --> Output[Rewritten content]
-    CommentPass --> Output
+    Input[Text or code comments] --> Target{Prose or code target?}
+    Target -- code --> CommentPass[Code-comment pass: delete WHAT, keep WHY]
+    Target -- prose --> Pipeline
+    CommentPass --> Pipeline[Six-pass pipeline: Pattern Breaker to Soul Detector]
+    Pipeline --> Output[Rewritten content]
 ```
 
 ---
