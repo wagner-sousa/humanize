@@ -81,6 +81,18 @@ humanize/
 
 Ask in plain language: "make this sound more human", "clean up these comments", "remove the AI tics from my PR description", "this reads like ChatGPT wrote it". The skill fires on the description keywords — no command syntax needed. Say which target (prose or code comments) if it isn't obvious from what you're pointing at.
 
+### Example: PR description
+
+**Before** — typical AI-generated output:
+
+> This PR introduces a robust and scalable solution for handling user authentication. Additionally, it leverages JWT tokens to facilitate seamless session management. It is worth noting that this implementation follows industry best practices. Furthermore, the changes include comprehensive error handling and thorough validation. Overall, this update significantly enhances the security posture of the application while maintaining backward compatibility.
+
+**After** — same PR, run through humanize:
+
+> This PR adds user authentication using JWT tokens for session management. Error handling and validation are covered throughout, and it stays backward compatible, so this should tighten up the app's security without breaking anything currently relying on the old flow.
+
+Every fact from the source survives (JWT, session management, error handling, validation, backward compatibility). What's gone: the rule-of-three padding, the hollow intensifiers ("robust and scalable", "seamless"), the dead transitions ("Additionally", "Furthermore", "It is worth noting", "Overall"), and the uniform, over-corrected rhythm. In a blind trigger eval, reviewers marked the "before" text as stiffer and more uniform every time; the "after" text read as something a person would actually write.
+
 ---
 
 ## Architecture
