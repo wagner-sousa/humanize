@@ -1,6 +1,6 @@
 ---
 name: humanize
-description: "Takes already-written text and strips the machine accent off it: uniform paragraph rhythm, hollow intensifiers, rule-of-three lists, throat-clearing openers, em-dash strings standing in for real punctuation — the patterns that mark AI-generated writing, without changing a single fact, example, or technical detail. Runs six sequential passes, each building on the last. Two targets: prose (docs, PR descriptions, commit bodies, chat replies) and code comments (delete comments that just restate the next line, keep only the ones explaining a non-obvious WHY). Use this skill whenever someone says the text sounds robotic, reads like ChatGPT, feels too uniform or over-corrected, wants it humanized or de-AI-ified, or asks to clean up comments that read like they were written by a machine."
+description: "Rewrites already-written text/code comments to remove AI-writing tells (uniform rhythm, hollow intensifiers, rule-of-three lists, throat-clearers, em-dash strings) without changing facts. Use when text sounds robotic, reads like ChatGPT, or needs de-AI-ifying/humanizing."
 ---
 
 # Humanize — strip the AI accent from text and code
